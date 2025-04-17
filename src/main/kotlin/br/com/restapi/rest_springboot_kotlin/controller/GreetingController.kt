@@ -1,5 +1,6 @@
-package br.com.restapi.rest_springboot_kotlin
+package br.com.restapi.rest_springboot_kotlin.controller
 
+import br.com.restapi.rest_springboot_kotlin.model.Greeting
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
