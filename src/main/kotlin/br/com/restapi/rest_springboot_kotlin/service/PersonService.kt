@@ -1,5 +1,6 @@
 package br.com.restapi.rest_springboot_kotlin.service
 
+import br.com.restapi.rest_springboot_kotlin.controller.PersonController
 import br.com.restapi.rest_springboot_kotlin.data.vo.v1.PersonVO
 import br.com.restapi.rest_springboot_kotlin.data.vo.v1.toEntity
 import br.com.restapi.rest_springboot_kotlin.exception.ResourceNotFoundException
@@ -7,6 +8,7 @@ import br.com.restapi.rest_springboot_kotlin.model.Person
 import br.com.restapi.rest_springboot_kotlin.model.repository.PersonRepository
 import br.com.restapi.rest_springboot_kotlin.model.toVo
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*
 import org.springframework.stereotype.Service
 import java.util.logging.Logger
 
@@ -19,25 +21,31 @@ class PersonService {
 
     fun findAll() : List<PersonVO> {
         logger.info("Find all people")
-        return repository.findAll().map { it.toVo() }
+        val personList = repository.findAll().map { it.toVo() }
+        return personList.map { it.add(linkTo(PersonController::class.java).slash(it.key).withSelfRel()) }
     }
 
     fun findById(id: Long) : PersonVO {
         logger.info("Find a person")
-        return findPersonById(id).toVo()
+        val personVO = findPersonById(id).toVo()
+        personVO.add(linkTo(PersonController::class.java).slash(personVO.key).withSelfRel())
+        return personVO
     }
 
     fun create(person: PersonVO) : PersonVO {
         logger.info("Create a person with name ${person.firstName}")
-        return repository.save(person.toEntity()).toVo()
+        val personVO = repository.save(person.toEntity()).toVo()
+        personVO.add(linkTo(PersonController::class.java).slash(personVO.key).withSelfRel())
+        return personVO
     }
 
     fun update(person: PersonVO) : PersonVO {
         logger.info("Updating a person with id: $person.id")
-        val entity = repository.findById(person.id)
-            .orElseThrow({ ResourceNotFoundException("No records found for id: $person.id") })
+        val entity = findPersonById(person.key)
         entity.firstName = person.firstName
-        return repository.save(entity).toVo()
+        val personVO = repository.save(entity).toVo()
+        personVO.add(linkTo(PersonController::class.java).slash(personVO.key).withSelfRel())
+        return personVO
     }
 
     fun delete(id: Long) {
