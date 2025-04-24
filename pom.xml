@@ -120,6 +120,19 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			<!-- maven surefire -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<argLine>
+						-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+						-Xshare:off
+						-XX:+EnableDynamicAgentLoading
+					</argLine>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
