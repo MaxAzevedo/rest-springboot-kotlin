@@ -1,8 +1,9 @@
-package br.com.restapi.rest_springboot_kotlin.service
+package br.com.restapi.rest_springboot_kotlin.unittests.service
 
 import br.com.restapi.rest_springboot_kotlin.data.vo.v1.PersonVO
 import br.com.restapi.rest_springboot_kotlin.model.Person
-import br.com.restapi.rest_springboot_kotlin.model.repository.PersonRepository
+import br.com.restapi.rest_springboot_kotlin.repository.PersonRepository
+import br.com.restapi.rest_springboot_kotlin.service.PersonService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -67,5 +68,18 @@ class PersonServiceTest {
         assertNotNull(result.links)
         assertTrue(result.links.toString().contains("/person/v1/1"))
         assertEquals(result.firstName, "Max Updated")
+    }
+
+    @Test
+    fun findAllTest(){
+        val personList = listOf(Person(id = 1, firstName =  "Max"))
+        `when`(repository.findAll()).thenReturn(personList)
+        val result = service.findAll()
+
+        assertNotNull(result)
+        assertNotNull(result.first().key)
+        assertNotNull(result.first().links)
+        assertTrue(result.first().links.toString().contains("/person/v1/1"))
+        assertEquals(result.first().firstName, "Max")
     }
 }

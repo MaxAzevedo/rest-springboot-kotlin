@@ -1,2 +1,2 @@
-INSERT INTO `rest_springboot_kotlin`.`person`(`first_name`) VALUES ("Max");
-INSERT INTO `rest_springboot_kotlin`.`person`(`first_name`) VALUES ("André");
+INSERT INTO `person`(`first_name`) VALUES ("Max");
+INSERT INTO `person`(`first_name`) VALUES ("André");

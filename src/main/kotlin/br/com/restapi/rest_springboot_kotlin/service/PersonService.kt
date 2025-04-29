@@ -5,7 +5,7 @@ import br.com.restapi.rest_springboot_kotlin.data.vo.v1.PersonVO
 import br.com.restapi.rest_springboot_kotlin.data.vo.v1.toEntity
 import br.com.restapi.rest_springboot_kotlin.exception.ResourceNotFoundException
 import br.com.restapi.rest_springboot_kotlin.model.Person
-import br.com.restapi.rest_springboot_kotlin.model.repository.PersonRepository
+import br.com.restapi.rest_springboot_kotlin.repository.PersonRepository
 import br.com.restapi.rest_springboot_kotlin.model.toVo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*

@@ -1,4 +1,4 @@
-package br.com.restapi.rest_springboot_kotlin.integrationtests
+package br.com.restapi.rest_springboot_kotlin.integrationtests.testcontainers
 
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
