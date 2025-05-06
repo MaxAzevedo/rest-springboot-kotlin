@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/person/v1/")
+@RequestMapping("/api/person/v1")
 @Tag(name = "People", description = "Endpoint to handle People")
 class PersonController {
 
