@@ -54,6 +54,16 @@ class JWTTokenProvider {
             refreshToken = refreshToken)
     }
 
+    fun createRefreshToken(refreshToken: String) : TokenVO {
+        var token = ""
+        if(refreshToken.contains(BEARER)) token = refreshToken.substring(BEARER.length)
+        val verifier: JWTVerifier = JWT.require(algorithm).build()
+        val decodedJWT: DecodedJWT = verifier.verify(token)
+        val userName = decodedJWT.subject
+        val roles = decodedJWT.getClaim("roles").asList(String::class.java)
+        return createAccessToken(userName, roles)
+    }
+
     private fun getAccessToken(userName: String, roles: List<String?>, now: Date, validity: Date): String {
         val issuerUrl: String = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
         return JWT
@@ -104,6 +114,5 @@ class JWTTokenProvider {
         } catch (e: Exception) {
             throw InvalidJwtAuthenticationException("Expired or invalid JWT token!")
         }
-
     }
 }

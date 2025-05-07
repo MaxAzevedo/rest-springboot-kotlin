@@ -1,5 +1,6 @@
 package br.com.restapi.rest_springboot_kotlin.config
 
+import br.com.restapi.rest_springboot_kotlin.exception.handler.JwtTokenFilterExceptionHandler
 import br.com.restapi.rest_springboot_kotlin.security.jwt.JWTTokenFilter
 import br.com.restapi.rest_springboot_kotlin.security.jwt.JWTTokenProvider
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +28,9 @@ class SecurityConfig {
     @Autowired
     private lateinit var tokenProvider: JWTTokenProvider
 
+    @Autowired
+    private lateinit var jwtTokenFilterExceptionHandler: JwtTokenFilterExceptionHandler
+
     @Bean
     fun passwordEncoder() : PasswordEncoder {
         val encoders: MutableMap<String, PasswordEncoder> = HashMap<String, PasswordEncoder>()
@@ -45,7 +49,7 @@ class SecurityConfig {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity) : SecurityFilterChain {
-        val customFilter = JWTTokenFilter(tokenProvider)
+        val customFilter = JWTTokenFilter(tokenProvider, jwtTokenFilterExceptionHandler)
         return http
             .httpBasic{ basic: HttpBasicConfigurer<HttpSecurity> -> basic.disable()}
             .csrf { csrf: CsrfConfigurer<HttpSecurity> -> csrf.disable() }

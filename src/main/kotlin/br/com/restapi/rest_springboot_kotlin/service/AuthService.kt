@@ -28,7 +28,7 @@ class AuthService {
 
     private val logger = Logger.getLogger(AuthService::class.java.name)
 
-    fun singing(data: AccountCredentialsVO) : ResponseEntity<*> {
+    fun singing(data: AccountCredentialsVO): ResponseEntity<*> {
         logger.info("Trying log user ${data.userName}")
         return try {
             val username = data.userName
@@ -44,5 +44,16 @@ class AuthService {
         } catch (e: AuthenticationException) {
             throw BadCredentialsException("Invalid username or password supplied!")
         }
+    }
+
+    fun refreshToken(userName: String, refreshToken: String): ResponseEntity<*> {
+        logger.info("Trying refresh user $userName")
+        val user = repository.findByUserName(userName)
+        val tokenResponse: TokenVO = if (user != null) {
+            tokenProvider.createRefreshToken(refreshToken)
+        } else {
+            throw UsernameNotFoundException("Username $userName not found!")
+        }
+        return ResponseEntity.ok(tokenResponse)
     }
 }

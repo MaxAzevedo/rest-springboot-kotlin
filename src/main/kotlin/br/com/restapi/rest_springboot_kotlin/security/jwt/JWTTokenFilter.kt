@@ -1,29 +1,33 @@
 package br.com.restapi.rest_springboot_kotlin.security.jwt
 
-import br.com.restapi.rest_springboot_kotlin.exception.InvalidJwtAuthenticationException
+import br.com.restapi.rest_springboot_kotlin.exception.handler.JwtTokenFilterExceptionHandler
 import jakarta.servlet.FilterChain
-import jakarta.servlet.ServletRequest
-import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.web.filter.GenericFilterBean
+import org.springframework.web.filter.OncePerRequestFilter
 
 class JWTTokenFilter(
-    @field: Autowired private val tokenProvider: JWTTokenProvider)
-    : GenericFilterBean() {
+    @field: Autowired private val tokenProvider: JWTTokenProvider,
+    @field: Autowired private val jwtTokenFilterExceptionHandler: JwtTokenFilterExceptionHandler
+)
+    : OncePerRequestFilter() {
 
-    override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain) {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
         try {
-            val token = tokenProvider.resolveToken(request as HttpServletRequest)
-            if(!token.isNullOrBlank() && tokenProvider.validateToken(token)) {
+            val token = tokenProvider.resolveToken(request)
+            if (!token.isNullOrBlank() && tokenProvider.validateToken(token)) {
                 val auth = tokenProvider.getAuthentication(token)
                 SecurityContextHolder.getContext().authentication = auth
             }
-            chain.doFilter(request, response)
-        } catch (e: Exception) {
-            throw InvalidJwtAuthenticationException("Invalid token")
+            filterChain.doFilter(request, response)
+        } catch (ex: Exception) {
+            jwtTokenFilterExceptionHandler.resolveException(request, response, null, ex)
         }
-
     }
 }
