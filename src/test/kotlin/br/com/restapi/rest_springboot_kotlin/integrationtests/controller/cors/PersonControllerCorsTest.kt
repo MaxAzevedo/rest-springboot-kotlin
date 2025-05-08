@@ -1,5 +1,7 @@
 package br.com.restapi.rest_springboot_kotlin.integrationtests.controller.cors
 
+import br.com.restapi.rest_springboot_kotlin.data.vo.v1.AccountCredentialsVO
+import br.com.restapi.rest_springboot_kotlin.data.vo.v1.TokenVO
 import br.com.restapi.rest_springboot_kotlin.integrationtests.TestConfig
 import br.com.restapi.rest_springboot_kotlin.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.restapi.rest_springboot_kotlin.integrationtests.vo.PersonVO
@@ -24,12 +26,35 @@ class PersonControllerCorsTest : AbstractIntegrationTest(){
     private lateinit var specification: RequestSpecification
     private lateinit var objectMapper: ObjectMapper
     private lateinit var person: PersonVO
+    private lateinit var token: String
 
     @BeforeAll
     fun setupTests() {
         objectMapper = ObjectMapper()
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         person = PersonVO(1, "Teste")
+        token = ""
+    }
+
+    @Test
+    @Order(0)
+    fun authorization() {
+        val user = AccountCredentialsVO(userName = "max", password = "admin123")
+        token =
+            given()
+                .basePath("/auth/singing")
+                .port(TestConfig.SERVER_PORT)
+                .contentType(TestConfig.CONTENT_TYPE_JSON)
+                .body(user)
+                .`when`()
+                .post()
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .`as`(TokenVO::class.java)
+                .accessToken!!
+
     }
 
     @Test
@@ -39,7 +64,10 @@ class PersonControllerCorsTest : AbstractIntegrationTest(){
             .addHeader(
                 TestConfig.HEADER_PARAM_ORIGIN,
                 TestConfig.ORIGIN_LOCALHOST)
-            .setBasePath("/api/person/v1/")
+            .addHeader(
+                TestConfig.HEADER_PARAM_AUTHORIZATION,
+                "Bearer $token")
+            .setBasePath("/api/person/v1")
             .setPort(TestConfig.SERVER_PORT)
             .addFilter(RequestLoggingFilter(LogDetail.ALL))
             .addFilter(ResponseLoggingFilter(LogDetail.ALL))

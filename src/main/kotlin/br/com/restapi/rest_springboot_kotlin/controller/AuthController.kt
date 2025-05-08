@@ -22,7 +22,7 @@ class AuthController {
     @Autowired
     lateinit var authService: AuthService
 
-    @PostMapping(value = ["/signin"])
+    @PostMapping(value = ["/singing"])
     fun singing(@RequestBody data: AccountCredentialsVO?): ResponseEntity<*> {
         return if (data!!.userName.isNullOrBlank() || data.password.isNullOrBlank())
             ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request")

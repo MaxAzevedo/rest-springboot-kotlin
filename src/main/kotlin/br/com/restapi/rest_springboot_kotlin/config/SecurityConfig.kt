@@ -59,7 +59,7 @@ class SecurityConfig {
             }.authorizeHttpRequests {
                 authorizeHttpRequests -> authorizeHttpRequests
                     .requestMatchers(
-                        "/auth/signin",
+                        "/auth/singing",
                         "/auth/refresh/**",
                         "/v3/api-docs/**",
                         "/swagger-ui/**")
