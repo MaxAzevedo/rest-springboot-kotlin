@@ -9,6 +9,7 @@ data class PersonVO (
     @JsonProperty("id")
     var key: Long = 0,
     var firstName: String = "",
+    var enabled: Boolean = true,
 
     ) : RepresentationModel<PersonVO>()
 fun PersonVO.toEntity() = Person (this.key, this.firstName)

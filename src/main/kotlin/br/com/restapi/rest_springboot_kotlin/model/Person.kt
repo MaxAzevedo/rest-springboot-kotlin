@@ -14,7 +14,10 @@ data class Person (
     @Column(name = "first_name", nullable = false, length = 80)
     var firstName: String = "",
 
+    @Column(nullable = false)
+    var enabled: Boolean = true
+
 )
 
-fun Person.toVo() : PersonVO = PersonVO(this.id, this.firstName)
+fun Person.toVo() : PersonVO = PersonVO(this.id, this.firstName, this.enabled)
 
