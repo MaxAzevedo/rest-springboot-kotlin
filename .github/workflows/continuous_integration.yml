@@ -1,0 +1,40 @@
+name: Continuos Integration with Github Actions
+
+on:
+  push:
+    branches: 
+      - main
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Login to Dockerhub
+      uses: docker/login-action@v3.4.0
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@v3.14.1]
+      with:
+        java-version: '21'
+        distribution: 'adopt'
+        cache: maven
+        
+    - name: Build aplication jar
+      working-directory: ./rest-springboot-kotlin
+      run: mvn clean package
+    
+    - name: Docker Compose Build
+      working-directory: ./rest-springboot-kotlin
+      run: docker compose build
+
+    - name: Docker Compose Push
+      run: |
+        docker tag ${{ secrets.DOCKER_USERNAME }}/rest-spring-boot-kotlin:latest ${{ secrets.DOCKER_USERNAME }}/rest-spring-boot-kotlin:${{ github.run_id }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/rest-spring-boot-kotlin:${{ github.run_id }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/rest-spring-boot-kotlin:latest
